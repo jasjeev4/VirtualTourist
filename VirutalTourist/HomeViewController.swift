@@ -197,17 +197,16 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
             // Save coordinates
             saveCoordinates()
             
-            if let annotation = view.annotation {
-                chosenPin.title = annotation.title as? String
+            coordinates = view.annotation?.coordinate
+            chosenPin = Pin(context: dataController.viewContext)
+            var title = view.annotation?.title
+            if let title = title {
+                if let title = title {
+                    chosenPin.title = title
+                }
             }
-            else {
-                print("Didn\'t unwrap title")
-            }
+            chosenPin.longitude = view.annotation?.coordinate.latitude as! Double
             chosenPin.latitude = view.annotation?.coordinate.latitude as! Double
-            chosenPin.longitude = view.annotation?.coordinate.longitude as! Double
-            
-            // segue to next scene and pass coordinates
-            self.coordinates = view.annotation?.coordinate
             performSegue(withIdentifier: "showPin", sender: self)
         }
     }

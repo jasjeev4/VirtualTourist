@@ -11,7 +11,7 @@ import UIKit
 import MapKit
 import CoreData
 
-class PointViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class PointViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, NSFetchedResultsControllerDelegate {
     var coordinates: CLLocationCoordinate2D!
     var dataController: DataController!
     var pin: Pin!
@@ -19,6 +19,7 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
     @IBOutlet weak var mapView: MKMapView!
     
     private var fetchedResultsController: NSFetchedResultsController<Photo>!
+    
     
     @IBAction func onBackClick(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -30,6 +31,7 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
         fetchRequest.predicate = predicate
         let sortDescriptor = NSSortDescriptor(key: "photoID", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
+        
         do {
             try fetchedResultsController.performFetch()
         } catch {
@@ -70,18 +72,38 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
         //center map coordinates
         centerMap()
         
-        
         setupFetchedResultsController()
-        
+
         // If we don't have any photos, fetch from the API
-        if (pin?.photos?.count ?? 0 == 0) {
-            // Download pictures
-            downloadPhotos()
+        if (pin.photos?.count ?? 0 == 0) {
+            fetchPhotosFromApi()
         } else {
             collectionButton.isEnabled = true
         }
+    }
+ 
+    func fetchPhotosFromApi() {
+        // ctivityIndicator?.startAnimating()
+        collectionButton?.isEnabled = false
         
-        
+        FlickrClient.searchPhotos(lat: "\(coordinates.latitude ?? 0.0)", long: "\(coordinates.longitude ?? 0.0)", completion: handleSearchApiResponse(photos:error:))
+    }
+    
+    func savePhotos(photos: [Photos]) {
+        photos.forEach { (photoResponse) in
+            let newPhoto = Photo(context: dataController.viewContext)
+            newPhoto.pin = pin
+            newPhoto.photoID = photoResponse.id
+            newPhoto.title = photoResponse.title
+            newPhoto.url = FlickrClient.Endpoints.getPhoto(farmId: photoResponse.farm, serverId: photoResponse.server, photoId: photoResponse.id, photoSecret: photoResponse.secret).stringValue
+            
+            do {
+                try dataController.viewContext.save()
+            } catch {
+                print("ERROR: Failed to write photo")
+                // showAlert(title: "Error", message: error.localizedDescription)
+            }
+        }
     }
     
     func centerMap() {
