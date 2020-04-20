@@ -45,8 +45,18 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         
         if let pins = try? dataController.viewContext.fetch(fetchRequest) {
             pins.forEach { (pin) in
-                let annotation = PinAnnotation(pin: pin)
-                mapView.addAnnotation(annotation)
+                // Generate pins.
+                let myPin: MKPointAnnotation = MKPointAnnotation()
+                
+                // Set the coordinates.
+                myPin.coordinate = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
+                
+                
+                // Set the title.
+                myPin.title = "\(pin.latitude), \(pin.longitude)"
+                                
+                // Added pins to MapView.
+                mapView.addAnnotation(myPin)
             }
         }
     }
@@ -135,6 +145,7 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         // Added pins to MapView.
         mapView.addAnnotation(myPin)
         
+        
         // Save pin to store
         chosenPin = Pin(context: dataController.viewContext)
         chosenPin.longitude = myCoordinate.longitude
@@ -142,7 +153,7 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         chosenPin.title = myPin.title
         do {
             try dataController.viewContext.save()
-            setupFetchedResultsController()
+            // setupFetchedResultsController()
         } catch {
             showAlert(title: "Error", message: error.localizedDescription)
         }
@@ -186,13 +197,18 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
             // Save coordinates
             saveCoordinates()
             
-            if let annotation = view.annotation as? PinAnnotation {
-                chosenPin = annotation.pin
-                // segue to next scene and pass coordinates
-                self.coordinates = view.annotation?.coordinate
-                performSegue(withIdentifier: "showPin", sender: self)
+            if let annotation = view.annotation {
+                chosenPin.title = annotation.title as? String
             }
+            else {
+                print("Didn\'t unwrap title")
+            }
+            chosenPin.latitude = view.annotation?.coordinate.latitude as! Double
+            chosenPin.longitude = view.annotation?.coordinate.longitude as! Double
             
+            // segue to next scene and pass coordinates
+            self.coordinates = view.annotation?.coordinate
+            performSegue(withIdentifier: "showPin", sender: self)
         }
     }
     
