@@ -31,7 +31,8 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
         fetchRequest.predicate = predicate
         let sortDescriptor = NSSortDescriptor(key: "photoID", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
-        
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+
         do {
             try fetchedResultsController.performFetch()
         } catch {
