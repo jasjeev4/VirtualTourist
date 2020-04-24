@@ -18,6 +18,7 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
     var pinTitle: String!
     @IBOutlet weak var collectionButton: UIBarButtonItem!
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var collectionView: UICollectionView!
     
     private var fetchedResultsController: NSFetchedResultsController<Photo>!
     
@@ -87,7 +88,7 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
     }
     
     func savePhotos(photos: [Photos]) {
-        photos.forEach { (photoResponse) in
+      //  photos.forEach { (photoResponse) in
             
 //            let newPhoto = Photo(context: dataController.viewContext)
 //            newPhoto.pin = pin
@@ -103,23 +104,23 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
 //            }
             
             // Save to store
-            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-              return
-            }
-            let managedContext = appDelegate.persistentContainer.viewContext
-            let entity = NSEntityDescription.entity(forEntityName: "Photo", in: managedContext)!
-            let photo = NSManagedObject(entity: entity, insertInto: managedContext)
-            photo.setValue(pin, forKeyPath: "pin")
-            photo.setValue(photoResponse.id, forKeyPath: "photoID")
-            photo.setValue(photoResponse.title, forKeyPath: "title")
-            photo.setValue(FlickrClient.Endpoints.getPhoto(farmId: photoResponse.farm, serverId: photoResponse.server, photoId: photoResponse.id, photoSecret: photoResponse.secret).stringValue, forKeyPath: "url")
-            
-            do {
-              try managedContext.save()
-            } catch let error as NSError {
-              print("Could not save. \(error), \(error.userInfo)")
-            }
-        }
+//            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+//              return
+//            }
+//            let managedContext = appDelegate.persistentContainer.viewContext
+//            let entity = NSEntityDescription.entity(forEntityName: "Photo", in: managedContext)!
+//            let photo = NSManagedObject(entity: entity, insertInto: managedContext)
+//            photo.setValue(pin, forKeyPath: "pin")
+//            photo.setValue(photoResponse.id, forKeyPath: "photoID")
+//            photo.setValue(photoResponse.title, forKeyPath: "title")
+//            photo.setValue(FlickrClient.Endpoints.getPhoto(farmId: photoResponse.farm, serverId: photoResponse.server, photoId: photoResponse.id, photoSecret: photoResponse.secret).stringValue, forKeyPath: "url")
+//
+//            do {
+//              try managedContext.save()
+//            } catch let error as NSError {
+//              print("Could not save. \(error), \(error.userInfo)")
+//            }
+//        }
         
             
     }

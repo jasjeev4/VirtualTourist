@@ -255,20 +255,31 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         if control == view.rightCalloutAccessoryView {
             // Save coordinates
             saveCoordinates()
-            
+             
             coordinates = view.annotation?.coordinate
-            chosenPin = Pin()
             let title = view.annotation?.title
             if let title = title {
                 if let title = title {
                     print("Title: \(title) ")
                     self.pinTitle = title
-                    chosenPin.title = title
+                    
+                    //Get pin oject from Core Data
+                    guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+                        return
+                      }
+                      
+                    let managedContext = appDelegate.persistentContainer.viewContext
+                    let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Pin")
+                    do {
+                        let test = try managedContext.fetch(fetchRequest)
+                        chosenPin = test[0] as! Pin
+                        // self.tableView.reloadData()
+                        performSegue(withIdentifier: "showPin", sender: self)
+                    } catch let error as NSError {
+                      print("Could not fetch. \(error), \(error.userInfo)")
+                    }
                 }
             }
-            chosenPin.longitude = view.annotation?.coordinate.latitude as! Double
-            chosenPin.latitude = view.annotation?.coordinate.latitude as! Double
-            performSegue(withIdentifier: "showPin", sender: self)
         }
     }
     
@@ -277,7 +288,7 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         if let coordinates =  coordinates {
             vc.self.coordinates = coordinates
             vc.self.pin = chosenPin
-            vc.self.pinTitle = pinTitle
+            //vc.self.pinTitle = pinTitle
         }
         else {
             print("Location not set")
