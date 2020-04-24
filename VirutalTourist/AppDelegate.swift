@@ -17,21 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         print("Documents Directory: ", FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last ?? "Not Found!")
-
-        initDataController()
         return true
-    }
-    
-    
-    private func initDataController() {
-        guard #available(iOS 13.0, *) else {
-            let dataController = DataController(modelName: "VirutalTourist")
-            dataController.load()
-            let navigationController = window?.rootViewController as! UINavigationController
-            let viewController = navigationController.topViewController as! HomeViewController
-            viewController.dataController = dataController
-            return
-        }
     }
 
     // MARK: UISceneSession Lifecycle

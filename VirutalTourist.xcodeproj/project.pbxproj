@@ -18,13 +18,13 @@
 		C85B6B392449FC02006EBC45 /* VirutalTouristUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85B6B382449FC02006EBC45 /* VirutalTouristUITests.swift */; };
 		C87BBEA2244CBC4600FA5FCF /* AlbumCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BBEA1244CBC4600FA5FCF /* AlbumCell.swift */; };
 		C87BBEA4244DB16C00FA5FCF /* PinLocationAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BBEA3244DB16C00FA5FCF /* PinLocationAnnotation.swift */; };
-		C87BBEA6244DCF8E00FA5FCF /* PinAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87BBEA5244DCF8E00FA5FCF /* PinAnnotation.swift */; };
 		C8CF8E75244B129F00831D1E /* PointViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8CF8E74244B129F00831D1E /* PointViewController.swift */; };
 		C8CF8E78244B383600831D1E /* FlickerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8CF8E77244B383600831D1E /* FlickerClient.swift */; };
 		C8CF8E7D244B520000831D1E /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8CF8E7C244B520000831D1E /* DataController.swift */; };
 		C8CF8E7F244B5CA900831D1E /* AllPhotos.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8CF8E7E244B5CA900831D1E /* AllPhotos.swift */; };
 		C8CF8E81244B5CFD00831D1E /* Photos.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8CF8E80244B5CFD00831D1E /* Photos.swift */; };
 		C8CF8E83244B648800831D1E /* PhotosResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8CF8E82244B648800831D1E /* PhotosResponse.swift */; };
+		C8E1B55524534DEA00F11A30 /* PhotoAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E1B55424534DEA00F11A30 /* PhotoAlbum.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,13 +62,13 @@
 		C85B6B3A2449FC02006EBC45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C87BBEA1244CBC4600FA5FCF /* AlbumCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCell.swift; sourceTree = "<group>"; };
 		C87BBEA3244DB16C00FA5FCF /* PinLocationAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinLocationAnnotation.swift; sourceTree = "<group>"; };
-		C87BBEA5244DCF8E00FA5FCF /* PinAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinAnnotation.swift; sourceTree = "<group>"; };
 		C8CF8E74244B129F00831D1E /* PointViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointViewController.swift; sourceTree = "<group>"; };
 		C8CF8E77244B383600831D1E /* FlickerClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlickerClient.swift; sourceTree = "<group>"; };
 		C8CF8E7C244B520000831D1E /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		C8CF8E7E244B5CA900831D1E /* AllPhotos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPhotos.swift; sourceTree = "<group>"; };
 		C8CF8E80244B5CFD00831D1E /* Photos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photos.swift; sourceTree = "<group>"; };
 		C8CF8E82244B648800831D1E /* PhotosResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosResponse.swift; sourceTree = "<group>"; };
+		C8E1B55424534DEA00F11A30 /* PhotoAlbum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAlbum.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,7 +130,6 @@
 				C85B6B212449FC02006EBC45 /* LaunchScreen.storyboard */,
 				C85B6B242449FC02006EBC45 /* Info.plist */,
 				C8CF8E74244B129F00831D1E /* PointViewController.swift */,
-				C87BBEA5244DCF8E00FA5FCF /* PinAnnotation.swift */,
 			);
 			path = VirutalTourist;
 			sourceTree = "<group>";
@@ -194,6 +193,7 @@
 			children = (
 				C8CF8E7C244B520000831D1E /* DataController.swift */,
 				C85B6B1C2449FBF7006EBC45 /* VirutalTourist.xcdatamodeld */,
+				C8E1B55424534DEA00F11A30 /* PhotoAlbum.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -334,13 +334,13 @@
 				C8CF8E7D244B520000831D1E /* DataController.swift in Sources */,
 				C8CF8E75244B129F00831D1E /* PointViewController.swift in Sources */,
 				C85B6B1E2449FBF7006EBC45 /* VirutalTourist.xcdatamodeld in Sources */,
-				C87BBEA6244DCF8E00FA5FCF /* PinAnnotation.swift in Sources */,
 				C85B6B182449FBF7006EBC45 /* HomeViewController.swift in Sources */,
 				C85B6B142449FBF7006EBC45 /* AppDelegate.swift in Sources */,
 				C85B6B162449FBF7006EBC45 /* SceneDelegate.swift in Sources */,
 				C8CF8E78244B383600831D1E /* FlickerClient.swift in Sources */,
 				C87BBEA4244DB16C00FA5FCF /* PinLocationAnnotation.swift in Sources */,
 				C87BBEA2244CBC4600FA5FCF /* AlbumCell.swift in Sources */,
+				C8E1B55524534DEA00F11A30 /* PhotoAlbum.swift in Sources */,
 				C8CF8E83244B648800831D1E /* PhotosResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
