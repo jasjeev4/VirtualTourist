@@ -15,6 +15,7 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
     var dataController: DataController!
     var chosenPin: Pin!
+    var pins: [NSManagedObject]!
     // MARK: - MKMapViewDelegate
 
 //    private func setupFetchedResultsController() {
@@ -41,24 +42,58 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
 //    }
     
     private func setupFetchedResultsController() {
-        let fetchRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
-        
-        if let pins = try? dataController.viewContext.fetch(fetchRequest) {
-            pins.forEach { (pin) in
-                // Generate pins.
-                let myPin: MKPointAnnotation = MKPointAnnotation()
-                
-                // Set the coordinates.
-                myPin.coordinate = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
-                
-                
-                // Set the title.
-                myPin.title = "\(pin.latitude), \(pin.longitude)"
-                                
-                // Added pins to MapView.
-                mapView.addAnnotation(myPin)
-            }
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+          return
         }
+
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Pin")
+        
+        do {
+            self.pins = try managedContext.fetch(fetchRequest)
+           // Add pins to map
+            pins.forEach { (pin) in
+            // Generate pins.
+            let myPin: MKPointAnnotation = MKPointAnnotation()
+
+            // Set the coordinates.
+            let lat = pin.value(forKey: "latitude")  as! CLLocationDegrees
+            let long = pin.value(forKey: "longitude")  as! CLLocationDegrees
+                
+            myPin.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+
+
+            // Set the title.
+            myPin.title = "\(pin.value(forKey: "latitude")), \(pin.value(forKey: "longitude"))"
+
+            // Added pins to MapView.
+            mapView.addAnnotation(myPin)
+        }
+            
+        } catch let error as NSError {
+          print("Could not fetch. \(error), \(error.userInfo)")
+        }
+        
+        //olse
+        
+//        let fetchRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
+//
+//        if let pins = try? dataController.viewContext.fetch(fetchRequest) {
+//            pins.forEach { (pin) in
+//                // Generate pins.
+//                let myPin: MKPointAnnotation = MKPointAnnotation()
+//
+//                // Set the coordinates.
+//                myPin.coordinate = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
+//
+//
+//                // Set the title.
+//                myPin.title = "\(pin.latitude), \(pin.longitude)"
+//
+//                // Added pins to MapView.
+//                mapView.addAnnotation(myPin)
+//            }
+//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -146,16 +181,38 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         mapView.addAnnotation(myPin)
         
         
-        // Save pin to store
-        chosenPin = Pin(context: dataController.viewContext)
-        chosenPin.longitude = myCoordinate.longitude
-        chosenPin.latitude = myCoordinate.latitude
-        chosenPin.title = myPin.title
+        savePin(title: myPin.title, coordinates: myPin.coordinate)
+    }
+    
+    func savePin(title: String?, coordinates: CLLocationCoordinate2D) {
+        guard let appDelegate =
+          UIApplication.shared.delegate as? AppDelegate else {
+          return
+        }
+        
+        // 1
+        let managedContext =
+          appDelegate.persistentContainer.viewContext
+        
+        // 2
+        let entity =
+          NSEntityDescription.entity(forEntityName: "Pin",
+                                     in: managedContext)!
+        
+        let pin = NSManagedObject(entity: entity,
+                                     insertInto: managedContext)
+        
+        // 3
+        pin.setValue(title, forKeyPath: "title")
+        pin.setValue(coordinates.latitude, forKeyPath: "latitude")
+        pin.setValue(coordinates.longitude, forKeyPath: "longitude")
+        
+        // 4
         do {
-            try dataController.viewContext.save()
-            // setupFetchedResultsController()
-        } catch {
-            showAlert(title: "Error", message: error.localizedDescription)
+          try managedContext.save()
+           pins.append(pin)
+        } catch let error as NSError {
+          print("Could not save. \(error), \(error.userInfo)")
         }
     }
     
@@ -190,7 +247,7 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         return pinView
     }
     
-    // This delegate method is implemented to respond to taps. It performs a sugue.
+    // This delegate method is implemented to respond to taps. It performs a segue.
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         if control == view.rightCalloutAccessoryView {

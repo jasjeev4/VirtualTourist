@@ -26,18 +26,18 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
     }
     
     fileprivate func setupFetchedResultsController() {
-        let fetchRequest:NSFetchRequest<Pin> = Pin.fetchRequest()
-        let predicate = NSPredicate(format: "pin == %@", pin)
-        fetchRequest.predicate = predicate
-        let sortDescriptor = NSSortDescriptor(key: "photoID", ascending: true)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
-
-        do {
-            try fetchedResultsController.performFetch()
-        } catch {
-            fatalError("The fetch could not be performed: \(error.localizedDescription)")
-        }
+//        let fetchRequest:NSFetchRequest<Pin> = Pin.fetchRequest()
+//        let predicate = NSPredicate(format: "pin == %@", pin)
+//        fetchRequest.predicate = predicate
+//        let sortDescriptor = NSSortDescriptor(key: "photoID", ascending: true)
+//        fetchRequest.sortDescriptors = [sortDescriptor]
+//        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+//
+//        do {
+//            try fetchedResultsController.performFetch()
+//        } catch {
+//            fatalError("The fetch could not be  performed: \(error.localizedDescription)")
+//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
