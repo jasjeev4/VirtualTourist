@@ -11,9 +11,11 @@ import UIKit
 import MapKit
 import CoreData
 
-class PointViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, NSFetchedResultsControllerDelegate {
+class PointViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, NSFetchedResultsControllerDelegate
+{
     var coordinates: CLLocationCoordinate2D!
     var photos: [NSManagedObject] = []
+    //var photoAlbum[PhotoAlbum] = []
     var pin: Pin!
     var pinTitle: String!
     @IBOutlet weak var collectionButton: UIBarButtonItem!
@@ -22,6 +24,31 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     private var fetchedResultsController: NSFetchedResultsController<Photo>!
     
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return photos.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cellPhoto = self.photos[indexPath.item]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionCell", for: indexPath) as! AlbumCell
+        if let url = cellPhoto.value(forKeyPath: "photoURL") as? String {
+            if let downloadedData = cellPhoto.value(forKeyPath: "pic") {
+                if let downloadedImage = UIImage(data: downloadedData as! Data) {
+                    cell.image?.image = downloadedImage
+                }
+            } else {
+                FlickrClient.downloadPhoto(urlString: url) { (image, error) in
+                    guard let image = image else {
+                        return
+                    }
+                    cell.image?.image = UIImage(data: image)
+                    cellPhoto.setValue(image, forKeyPath: "pic")
+                   // save to store
+                }
+            }
+        }
+        return cell
+    }
     
     @IBAction func onBackClick(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -77,6 +104,7 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
             fetchPhotosFromApi()
         } else {
             collectionButton.isEnabled = true
+            self.collectionView.reloadData()
         }
     }
  
@@ -88,7 +116,7 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
     }
     
     func savePhotos(photos: [Photos]) {
-      //  photos.forEach { (photoResponse) in
+      //
             
 //            let newPhoto = Photo(context: dataController.viewContext)
 //            newPhoto.pin = pin
@@ -102,26 +130,29 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
 //                print("ERROR: Failed to write photo")
 //                // showAlert(title: "Error", message: error.localizedDescription)
 //            }
-            
-            // Save to store
-//            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-//              return
-//            }
-//            let managedContext = appDelegate.persistentContainer.viewContext
-//            let entity = NSEntityDescription.entity(forEntityName: "Photo", in: managedContext)!
-//            let photo = NSManagedObject(entity: entity, insertInto: managedContext)
-//            photo.setValue(pin, forKeyPath: "pin")
-//            photo.setValue(photoResponse.id, forKeyPath: "photoID")
-//            photo.setValue(photoResponse.title, forKeyPath: "title")
-//            photo.setValue(FlickrClient.Endpoints.getPhoto(farmId: photoResponse.farm, serverId: photoResponse.server, photoId: photoResponse.id, photoSecret: photoResponse.secret).stringValue, forKeyPath: "url")
-//
-//            do {
-//              try managedContext.save()
-//            } catch let error as NSError {
-//              print("Could not save. \(error), \(error.userInfo)")
-//            }
-//        }
         
+        
+        photos.forEach { (photoResponse) in
+             // Save to store
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+              return
+            }
+            let managedContext = appDelegate.persistentContainer.viewContext
+            let entity = NSEntityDescription.entity(forEntityName: "Photo", in: managedContext)!
+            let photo = NSManagedObject(entity: entity, insertInto: managedContext)
+            photo.setValue(pin, forKeyPath: "pin")
+            photo.setValue(photoResponse.id, forKeyPath: "photoID")
+            photo.setValue(photoResponse.title, forKeyPath: "title")
+            photo.setValue(FlickrClient.Endpoints.getPhoto(farmId: photoResponse.farm, serverId: photoResponse.server, photoId: photoResponse.id, photoSecret: photoResponse.secret).stringValue, forKeyPath: "url")
+            print(photoResponse.id)
+            do {
+              try managedContext.save()
+            } catch let error as NSError {
+              print("Could not save. \(error), \(error.userInfo)")
+            }
+         }
+        
+        self.collectionView.reloadData()
             
     }
     
@@ -156,35 +187,9 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
             print("No images found")
             //errorLabel?.text = "No images found"
         } else {
-            print(photos)
-            //savePhotos(photos: photos)
+            //self.photos = photos
+            // self.collectionView.reloadData()
+            savePhotos(photos: photos)
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return fetchedResultsController?.sections?[section].numberOfObjects ?? 0
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cellPhoto = fetchedResultsController.object(at: indexPath)
-
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionCell", for: indexPath) as! AlbumCell
-        if let url = cellPhoto.url {
-            if let downloadedData = cellPhoto.pic {
-                if let downloadedImage = UIImage(data: downloadedData) {
-                    cell.image?.image = downloadedImage
-                }
-            } else {
-                FlickrClient.downloadPhoto(urlString: url) { (image, error) in
-                    guard let image = image else {
-                        return
-                    }
-                    cellPhoto.pic = image
-                   // try? self.dataController.viewContext.save()
-                }
-            }
-        }
-        return cell
     }
 }
-
