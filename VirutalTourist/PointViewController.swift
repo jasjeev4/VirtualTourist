@@ -13,8 +13,9 @@ import CoreData
 
 class PointViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, NSFetchedResultsControllerDelegate {
     var coordinates: CLLocationCoordinate2D!
-    var dataController: DataController!
+    var photos: [NSManagedObject] = []
     var pin: Pin!
+    var pinTitle: String!
     @IBOutlet weak var collectionButton: UIBarButtonItem!
     @IBOutlet weak var mapView: MKMapView!
     
@@ -26,18 +27,20 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
     }
     
     fileprivate func setupFetchedResultsController() {
-//        let fetchRequest:NSFetchRequest<Pin> = Pin.fetchRequest()
-//        let predicate = NSPredicate(format: "pin == %@", pin)
-//        fetchRequest.predicate = predicate
-//        let sortDescriptor = NSSortDescriptor(key: "photoID", ascending: true)
-//        fetchRequest.sortDescriptors = [sortDescriptor]
-//        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
-//
-//        do {
-//            try fetchedResultsController.performFetch()
-//        } catch {
-//            fatalError("The fetch could not be  performed: \(error.localizedDescription)")
-//        }
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+          return
+        }
+        
+      let managedContext = appDelegate.persistentContainer.viewContext
+      let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Photo")
+      fetchRequest.predicate = NSPredicate(format: "pin = %@", pin)
+      do {
+          photos = try managedContext.fetch(fetchRequest)
+        //self.collectionView.reloadData()
+          // self.tableView.reloadData()
+      } catch let error as NSError {
+        print("Could not fetch. \(error), \(error.userInfo)")
+      }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -57,15 +60,8 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         // Set the coordinates.
         myPin.coordinate = coordinates
-        
-        
-        
-        
         // Set the title.
         myPin.title = "\(coordinates.latitude), \(coordinates.longitude)"
-        
-        // Set subtitle.
-        // myPin.subtitle = "subtitle"
         
         // Added pins to MapView.
         mapView.addAnnotation(myPin)
@@ -75,8 +71,8 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         setupFetchedResultsController()
 
-        // If we don't have any photos, fetch from the API
-        if (pin.photos?.count ?? 0 == 0) {
+        // If no photos, fetch from the API
+        if (photos.count == 0) {
             fetchPhotosFromApi()
         } else {
             collectionButton.isEnabled = true
@@ -92,19 +88,40 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     func savePhotos(photos: [Photos]) {
         photos.forEach { (photoResponse) in
-            let newPhoto = Photo(context: dataController.viewContext)
-            newPhoto.pin = pin
-            newPhoto.photoID = photoResponse.id
-            newPhoto.title = photoResponse.title
-            newPhoto.url = FlickrClient.Endpoints.getPhoto(farmId: photoResponse.farm, serverId: photoResponse.server, photoId: photoResponse.id, photoSecret: photoResponse.secret).stringValue
+            
+//            let newPhoto = Photo(context: dataController.viewContext)
+//            newPhoto.pin = pin
+//            newPhoto.photoID = photoResponse.id
+//            newPhoto.title = photoResponse.title
+//            newPhoto.url = FlickrClient.Endpoints.getPhoto(farmId: photoResponse.farm, serverId: photoResponse.server, photoId: photoResponse.id, photoSecret: photoResponse.secret).stringValue
+//
+//            do {
+//                try dataController.viewContext.save()
+//            } catch {
+//                print("ERROR: Failed to write photo")
+//                // showAlert(title: "Error", message: error.localizedDescription)
+//            }
+            
+            // Save to store
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+              return
+            }
+            let managedContext = appDelegate.persistentContainer.viewContext
+            let entity = NSEntityDescription.entity(forEntityName: "Photo", in: managedContext)!
+            let photo = NSManagedObject(entity: entity, insertInto: managedContext)
+            photo.setValue(pin, forKeyPath: "pin")
+            photo.setValue(photoResponse.id, forKeyPath: "photoID")
+            photo.setValue(photoResponse.title, forKeyPath: "title")
+            photo.setValue(FlickrClient.Endpoints.getPhoto(farmId: photoResponse.farm, serverId: photoResponse.server, photoId: photoResponse.id, photoSecret: photoResponse.secret).stringValue, forKeyPath: "url")
             
             do {
-                try dataController.viewContext.save()
-            } catch {
-                print("ERROR: Failed to write photo")
-                // showAlert(title: "Error", message: error.localizedDescription)
+              try managedContext.save()
+            } catch let error as NSError {
+              print("Could not save. \(error), \(error.userInfo)")
             }
         }
+        
+            
     }
     
     func centerMap() {
@@ -162,7 +179,7 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
                         return
                     }
                     cellPhoto.pic = image
-                    try? self.dataController.viewContext.save()
+                   // try? self.dataController.viewContext.save()
                 }
             }
         }

@@ -13,8 +13,8 @@ import CoreData
 class HomeViewController: UIViewController, MKMapViewDelegate {
     var coordinates: CLLocationCoordinate2D!
     @IBOutlet weak var mapView: MKMapView!
-    var dataController: DataController!
     var chosenPin: Pin!
+    var pinTitle: String!
     var pins: [NSManagedObject]!
     // MARK: - MKMapViewDelegate
 
@@ -57,14 +57,14 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
             let myPin: MKPointAnnotation = MKPointAnnotation()
 
             // Set the coordinates.
-            let lat = pin.value(forKey: "latitude")  as! CLLocationDegrees
-            let long = pin.value(forKey: "longitude")  as! CLLocationDegrees
-                
+            let lat = pin.value(forKey: "latitude")  as! Double
+            let long = pin.value(forKey: "longitude")  as! Double
+                                
             myPin.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
 
 
             // Set the title.
-            myPin.title = "\(pin.value(forKey: "latitude")), \(pin.value(forKey: "longitude"))"
+            myPin.title = "\(lat), \(long)"
 
             // Added pins to MapView.
             mapView.addAnnotation(myPin)
@@ -172,7 +172,9 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         
         
         // Set the title.
+        
         myPin.title = "\(myCoordinate.latitude), \(myCoordinate.longitude)"
+        // print(myPin.title!)
         
         // Set subtitle.
         // myPin.subtitle = "subtitle"
@@ -181,10 +183,10 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         mapView.addAnnotation(myPin)
         
         
-        savePin(title: myPin.title, coordinates: myPin.coordinate)
+        savePin(title: myPin.title!, coordinates: myPin.coordinate)
     }
     
-    func savePin(title: String?, coordinates: CLLocationCoordinate2D) {
+    func savePin(title: String, coordinates: CLLocationCoordinate2D) {
         guard let appDelegate =
           UIApplication.shared.delegate as? AppDelegate else {
           return
@@ -255,10 +257,12 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
             saveCoordinates()
             
             coordinates = view.annotation?.coordinate
-            chosenPin = Pin(context: dataController.viewContext)
-            var title = view.annotation?.title
+            chosenPin = Pin()
+            let title = view.annotation?.title
             if let title = title {
                 if let title = title {
+                    print("Title: \(title) ")
+                    self.pinTitle = title
                     chosenPin.title = title
                 }
             }
@@ -272,8 +276,8 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         let vc = segue.destination as! PointViewController
         if let coordinates =  coordinates {
             vc.self.coordinates = coordinates
-            vc.self.dataController = dataController
-            vc.pin = chosenPin
+            vc.self.pin = chosenPin
+            vc.self.pinTitle = pinTitle
         }
         else {
             print("Location not set")
