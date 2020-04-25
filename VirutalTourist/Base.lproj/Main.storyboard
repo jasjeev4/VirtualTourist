@@ -65,8 +65,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="186" height="170"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.split.1x2" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Chm-BQ-7Tx">
-                                                    <rect key="frame" x="2" y="2" width="182" height="165.5"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="Chm-BQ-7Tx">
+                                                    <rect key="frame" x="2" y="1" width="182" height="168"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="180" id="nKj-He-9do"/>
                                                         <constraint firstAttribute="width" constant="180" id="y5v-Ce-Ebw"/>
@@ -148,7 +148,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Placeholder" width="512" height="512"/>
         <image name="chevron.left" catalog="system" width="96" height="128"/>
-        <image name="square.split.1x2" catalog="system" width="128" height="114"/>
     </resources>
 </document>

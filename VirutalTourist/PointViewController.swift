@@ -36,9 +36,9 @@ class PointViewController: UIViewController, NSFetchedResultsControllerDelegate
         
       let managedContext = appDelegate.persistentContainer.viewContext
       let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Photo")
-      fetchRequest.predicate = NSPredicate(format: "pin = %@", pin)
+      fetchRequest.predicate = NSPredicate(format: "pin.title = %@", pinTitle)
       do {
-          photos = try managedContext.fetch(fetchRequest)
+        self.photos = try managedContext.fetch(fetchRequest)
           
           self.collectionView?.reloadData()
           // self.tableView.reloadData()
@@ -83,6 +83,7 @@ class PointViewController: UIViewController, NSFetchedResultsControllerDelegate
         setupFetchedResultsController()
 
         // If no photos, fetch from the API
+
         if (photos.count == 0) {
             fetchPhotosFromApi()
         } else {
@@ -135,6 +136,7 @@ class PointViewController: UIViewController, NSFetchedResultsControllerDelegate
             }
          }
         
+        setupFetchedResultsController()
         self.collectionView?.reloadData()
             
     }
@@ -185,6 +187,9 @@ extension PointViewController: UICollectionViewDataSource, UICollectionViewDeleg
         func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
             let cellPhoto = self.photos[indexPath.item]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionCell", for: indexPath) as! AlbumCell
+            let imageName = "Placeholder.png"
+            let placeholder = UIImage(named: imageName)
+            cell.image?.image = placeholder
             if let url = cellPhoto.value(forKeyPath: "url") as? String {
                 if let downloadedData = cellPhoto.value(forKeyPath: "pic") {
                     if let downloadedImage = UIImage(data: downloadedData as! Data) {

@@ -255,7 +255,6 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         if control == view.rightCalloutAccessoryView {
             // Save coordinates
             saveCoordinates()
-             
             coordinates = view.annotation?.coordinate
             let title = view.annotation?.title
             if let title = title {
@@ -270,6 +269,7 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
                       
                     let managedContext = appDelegate.persistentContainer.viewContext
                     let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Pin")
+                    fetchRequest.predicate = NSPredicate(format: "title = %@", title)
                     do {
                         let test = try managedContext.fetch(fetchRequest)
                         chosenPin = test[0] as! Pin
@@ -288,7 +288,7 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         if let coordinates =  coordinates {
             vc.self.coordinates = coordinates
             vc.self.pin = chosenPin
-            //vc.self.pinTitle = pinTitle
+            vc.self.pinTitle = pinTitle
         }
         else {
             print("Location not set")
