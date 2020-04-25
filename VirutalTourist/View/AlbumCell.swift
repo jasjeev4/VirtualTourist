@@ -11,4 +11,5 @@ import UIKit
 
 class AlbumCell: UICollectionViewCell {
     @IBOutlet weak var image: UIImageView!
+    
 }

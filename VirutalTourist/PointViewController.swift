@@ -11,7 +11,7 @@ import UIKit
 import MapKit
 import CoreData
 
-class PointViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, NSFetchedResultsControllerDelegate
+class PointViewController: UIViewController, NSFetchedResultsControllerDelegate
 {
     var coordinates: CLLocationCoordinate2D!
     var photos: [NSManagedObject] = []
@@ -22,33 +22,7 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
     
-    private var fetchedResultsController: NSFetchedResultsController<Photo>!
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return photos.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cellPhoto = self.photos[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionCell", for: indexPath) as! AlbumCell
-        if let url = cellPhoto.value(forKeyPath: "photoURL") as? String {
-            if let downloadedData = cellPhoto.value(forKeyPath: "pic") {
-                if let downloadedImage = UIImage(data: downloadedData as! Data) {
-                    cell.image?.image = downloadedImage
-                }
-            } else {
-                FlickrClient.downloadPhoto(urlString: url) { (image, error) in
-                    guard let image = image else {
-                        return
-                    }
-                    cell.image?.image = UIImage(data: image)
-                    cellPhoto.setValue(image, forKeyPath: "pic")
-                   // save to store
-                }
-            }
-        }
-        return cell
-    }
     
     @IBAction func onBackClick(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -64,7 +38,8 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
       fetchRequest.predicate = NSPredicate(format: "pin = %@", pin)
       do {
           photos = try managedContext.fetch(fetchRequest)
-        //self.collectionView.reloadData()
+          
+          self.collectionView?.reloadData()
           // self.tableView.reloadData()
       } catch let error as NSError {
         print("Could not fetch. \(error), \(error.userInfo)")
@@ -78,6 +53,13 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         // print(coordinates)
 
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.collectionView.delegate = self
+        self.collectionView.dataSource = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -104,7 +86,7 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
             fetchPhotosFromApi()
         } else {
             collectionButton.isEnabled = true
-            self.collectionView.reloadData()
+            self.collectionView?.reloadData()
         }
     }
  
@@ -152,7 +134,7 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
             }
          }
         
-        self.collectionView.reloadData()
+        self.collectionView?.reloadData()
             
     }
     
@@ -188,8 +170,36 @@ class PointViewController: UIViewController, UICollectionViewDataSource, UIColle
             //errorLabel?.text = "No images found"
         } else {
             //self.photos = photos
-            // self.collectionView.reloadData()
             savePhotos(photos: photos)
         }
     }
+}
+
+// MARK: Extension to handle Collection View
+extension PointViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+            return photos.count
+        }
+
+        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+            let cellPhoto = self.photos[indexPath.item]
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionCell", for: indexPath) as! AlbumCell
+            if let url = cellPhoto.value(forKeyPath: "url") as? String {
+                if let downloadedData = cellPhoto.value(forKeyPath: "pic") {
+                    if let downloadedImage = UIImage(data: downloadedData as! Data) {
+                        cell.image?.image = downloadedImage
+                    }
+                } else {
+                    FlickrClient.downloadPhoto(urlString: url) { (image, error) in
+                        guard let image = image else {
+                            return
+                        }
+                        cell.image?.image = UIImage(data: image)
+                        cellPhoto.setValue(image, forKeyPath: "pic")
+                       // save to store
+                    }
+                }
+            }
+            return cell
+        }
 }

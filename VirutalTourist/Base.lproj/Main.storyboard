@@ -58,15 +58,15 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageCollectionCell" id="3j4-ar-LvY">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageCollectionCell" id="3j4-ar-LvY" customClass="AlbumCell" customModule="VirutalTourist" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="186" height="170"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="EZT-hg-ZpB">
                                             <rect key="frame" x="0.0" y="0.0" width="186" height="170"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="holderimage" translatesAutoresizingMaskIntoConstraints="NO" id="Chm-BQ-7Tx">
-                                                    <rect key="frame" x="2" y="1" width="182" height="168"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.split.1x2" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Chm-BQ-7Tx">
+                                                    <rect key="frame" x="2" y="2" width="182" height="165.5"/>
                                                 </imageView>
                                             </subviews>
                                             <constraints>
@@ -78,7 +78,7 @@
                                         </collectionViewCellContentView>
                                         <size key="customSize" width="186" height="170"/>
                                         <connections>
-                                            <outlet property="image" destination="Chm-BQ-7Tx" id="Xb9-Tk-bFW"/>
+                                            <outlet property="image" destination="Chm-BQ-7Tx" id="sR5-gA-Rwv"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -116,7 +116,7 @@
                     <navigationItem key="navigationItem" id="tU3-ZC-P0c"/>
                     <connections>
                         <outlet property="collectionButton" destination="FdM-AQ-wVs" id="0pr-gM-tih"/>
-                        <outlet property="collectionView" destination="ubU-qZ-mO6" id="kZT-SS-oGm"/>
+                        <outlet property="collectionView" destination="ubU-qZ-mO6" id="K2N-iS-29c"/>
                         <outlet property="mapView" destination="sxW-5d-mKW" id="dc9-td-T42"/>
                     </connections>
                 </viewController>
@@ -145,6 +145,6 @@
     </scenes>
     <resources>
         <image name="chevron.left" catalog="system" width="96" height="128"/>
-        <image name="holderimage" width="128" height="128"/>
+        <image name="square.split.1x2" catalog="system" width="128" height="114"/>
     </resources>
 </document>
