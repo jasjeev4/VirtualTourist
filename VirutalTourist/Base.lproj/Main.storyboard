@@ -32,6 +32,7 @@
                     <navigationItem key="navigationItem" id="Oi6-QL-GHQ"/>
                     <connections>
                         <outlet property="mapView" destination="txX-Bb-wEx" id="XC6-1i-sS0"/>
+                        <outlet property="mkMapView" destination="txX-Bb-wEx" id="heK-7Y-jSz"/>
                         <segue destination="vD8-9S-drn" kind="show" identifier="showPin" id="svT-Bf-G7i"/>
                     </connections>
                 </viewController>

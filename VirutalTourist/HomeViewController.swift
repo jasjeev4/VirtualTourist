@@ -16,6 +16,8 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
     var chosenPin: Pin!
     var pinTitle: String!
     var pins: [NSManagedObject]!
+    @IBOutlet weak var mkMapView: MKMapView!
+    private var mapChangedFromUserInteraction = false
     // MARK: - MKMapViewDelegate
 
 //    private func setupFetchedResultsController() {
@@ -119,12 +121,18 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         
         let latitude = UserDefaults.standard.double(forKey: "latitude")
         let longitude = UserDefaults.standard.double(forKey: "longitude")
+        
         //let region =  UserDefaults.standard.data(forKey: "region")
         
         let coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         
-        mapView.setCenter(coordinates, animated: true)
-        //mapView.setRegion(region, animated: true)
+
+        // Set regiom
+        if let region = loadRegion() {
+            mapView.setRegion(region, animated: true)
+        }
+        
+        // mapView.setCenter(coordinates, animated: true)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -147,10 +155,12 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         print("Coordinates: \(printed) ")
         let latitude = printed.latitude
         let logitude = printed.longitude
+        
         //var region = mapView.region
         //UserDefaults.standard.set(region, forKey: "region")
         UserDefaults.standard.set(latitude, forKey: "latitude")
         UserDefaults.standard.set(logitude, forKey: "longitude")
+        
     }
     
     @objc private func onLongPress(_ sender: UILongPressGestureRecognizer) {
@@ -283,6 +293,32 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        if (mapChangedFromUserInteraction) {
+            saveRegion(mapRegion: mkMapView.region)
+        }
+    }
+    
+    func mapView(_ mapView: MKMapView, regionWillChangeAnimated animated: Bool) {
+        mapChangedFromUserInteraction = mapViewRegionDidChangeFromUserInteraction()
+        if(mapChangedFromUserInteraction) {
+             saveRegion(mapRegion: mkMapView.region)
+        }
+    }
+    
+    private func mapViewRegionDidChangeFromUserInteraction() -> Bool {
+        let view = self.mkMapView.subviews[0]
+        //  Look through gesture recognizers to determine whether this region change is from user interaction
+        if let gestureRecognizers = view.gestureRecognizers {
+            for recognizer in gestureRecognizers {
+                if( recognizer.state == UIGestureRecognizer.State.began || recognizer.state == UIGestureRecognizer.State.ended ) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let vc = segue.destination as! PointViewController
         if let coordinates =  coordinates {
@@ -294,4 +330,45 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
             print("Location not set")
         }
     }
+    
+    
+    struct Keys {
+        static let latitude: String = "latitude"
+        static let longitude: String = "longitude"
+        static let latitudeDelta: String = "latitudeDelta"
+        static let longitudeDelta: String = "longitudeDelta"
+    }
+
+    func saveRegion(mapRegion: MKCoordinateRegion?) {
+        print("Saving region")
+        if let mapRegion = mapRegion {
+            UserDefaults.standard.set(mapRegion.center.latitude, forKey: Keys.latitude)
+            UserDefaults.standard.set(mapRegion.center.longitude, forKey: Keys.longitude)
+            print(mapRegion.span.latitudeDelta)
+            UserDefaults.standard.set(mapRegion.span.latitudeDelta, forKey: Keys.latitudeDelta)
+            UserDefaults.standard.set(mapRegion.span.longitudeDelta, forKey: Keys.longitudeDelta)
+        }
+    }
+    
+    func loadRegion() -> MKCoordinateRegion? {
+        var region: MKCoordinateRegion?
+        let lat = UserDefaults.standard.value(forKey: Keys.latitude)
+        let long = UserDefaults.standard.value(forKey: Keys.longitude)
+        let latdd = UserDefaults.standard.value(forKey: Keys.latitudeDelta)  as! Double ?? 500.0
+        print("latdd \(latdd)")
+        let longd = UserDefaults.standard.value(forKey: Keys.longitudeDelta) as! Double ?? 500.0
+        print("long \(longd)")
+        if let lat = lat {
+            if let long = long {
+                let centre = CLLocationCoordinate2D(latitude: lat as? CLLocationDegrees ?? 0.0, longitude: long  as? CLLocationDegrees ?? 0.0)
+                // region = MKCoordinateRegion(center: centre, latitudinalMeters: latdd as! CLLocationDistance, longitudinalMeters: longd as! CLLocationDistance)
+                //region = MKCoordinateRegion(center: centre, latitudinalMeters: latdd, longitudinalMeters: longd)
+                let span = MKCoordinateSpan(latitudeDelta: latdd, longitudeDelta: longd)
+                region = MKCoordinateRegion(center: centre, span: span)
+            }
+        }
+        print(region)
+        return region
+    }
+
 }

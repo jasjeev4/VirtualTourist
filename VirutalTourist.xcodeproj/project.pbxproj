@@ -25,6 +25,7 @@
 		C8CF8E81244B5CFD00831D1E /* Photos.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8CF8E80244B5CFD00831D1E /* Photos.swift */; };
 		C8CF8E83244B648800831D1E /* PhotosResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8CF8E82244B648800831D1E /* PhotosResponse.swift */; };
 		C8E1B55524534DEA00F11A30 /* PhotoAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E1B55424534DEA00F11A30 /* PhotoAlbum.swift */; };
+		C8E1B55824545E2000F11A30 /* RegionKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E1B55724545E2000F11A30 /* RegionKey.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 		C8CF8E80244B5CFD00831D1E /* Photos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photos.swift; sourceTree = "<group>"; };
 		C8CF8E82244B648800831D1E /* PhotosResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosResponse.swift; sourceTree = "<group>"; };
 		C8E1B55424534DEA00F11A30 /* PhotoAlbum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAlbum.swift; sourceTree = "<group>"; };
+		C8E1B55724545E2000F11A30 /* RegionKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionKey.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +165,7 @@
 		C8CF8E76244B37E900831D1E /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				C8E1B55624545DD400F11A30 /* Map */,
 				C8CF8E7B244B51D200831D1E /* CoreData */,
 				C8CF8E7A244B40D500831D1E /* API */,
 				C8CF8E79244B40C700831D1E /* Responses */,
@@ -196,6 +199,14 @@
 				C8E1B55424534DEA00F11A30 /* PhotoAlbum.swift */,
 			);
 			path = CoreData;
+			sourceTree = "<group>";
+		};
+		C8E1B55624545DD400F11A30 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				C8E1B55724545E2000F11A30 /* RegionKey.swift */,
+			);
+			path = Map;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -342,6 +353,7 @@
 				C87BBEA2244CBC4600FA5FCF /* AlbumCell.swift in Sources */,
 				C8E1B55524534DEA00F11A30 /* PhotoAlbum.swift in Sources */,
 				C8CF8E83244B648800831D1E /* PhotosResponse.swift in Sources */,
+				C8E1B55824545E2000F11A30 /* RegionKey.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
