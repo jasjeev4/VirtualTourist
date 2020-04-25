@@ -67,6 +67,10 @@
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.split.1x2" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Chm-BQ-7Tx">
                                                     <rect key="frame" x="2" y="2" width="182" height="165.5"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="180" id="nKj-He-9do"/>
+                                                        <constraint firstAttribute="width" constant="180" id="y5v-Ce-Ebw"/>
+                                                    </constraints>
                                                 </imageView>
                                             </subviews>
                                             <constraints>

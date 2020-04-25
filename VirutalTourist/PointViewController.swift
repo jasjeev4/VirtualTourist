@@ -13,6 +13,7 @@ import CoreData
 
 class PointViewController: UIViewController, NSFetchedResultsControllerDelegate
 {
+    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     var coordinates: CLLocationCoordinate2D!
     var photos: [NSManagedObject] = []
     //var photoAlbum[PhotoAlbum] = []
