@@ -23,6 +23,12 @@ class PointViewController: UIViewController, NSFetchedResultsControllerDelegate
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
     
+    @IBAction func refreshClick(_ sender: Any) {
+        handleReload()
+        setupFetchedResultsController()
+        fetchPhotosFromApi()
+        self.collectionView?.reloadData()
+    }
     
     
     @IBAction func onBackClick(_ sender: Any) {
@@ -37,6 +43,8 @@ class PointViewController: UIViewController, NSFetchedResultsControllerDelegate
       let managedContext = appDelegate.persistentContainer.viewContext
       let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Photo")
       fetchRequest.predicate = NSPredicate(format: "pin.title = %@", pinTitle)
+      let sortDescriptor = NSSortDescriptor(key: "photoID", ascending: true)
+      fetchRequest.sortDescriptors = [sortDescriptor]
       do {
         self.photos = try managedContext.fetch(fetchRequest)
           
@@ -208,4 +216,51 @@ extension PointViewController: UICollectionViewDataSource, UICollectionViewDeleg
             }
             return cell
         }
+    
+    func collectionView(_ collectionView: UICollectionView,  didSelectItemAt indexPath: IndexPath) {
+        let cellPhoto = self.photos[indexPath.item]
+        let url = cellPhoto.value(forKeyPath: "url") as! String
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+                 return
+               }
+               
+             let managedContext = appDelegate.persistentContainer.viewContext
+             let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Photo")
+             fetchRequest.predicate = NSPredicate(format: "url = %@", url)
+             do {
+                 let test = try managedContext.fetch(fetchRequest)
+                 let photo = test[0]
+                 managedContext.delete(photo)
+                 
+                 setupFetchedResultsController()
+                 try managedContext.save()
+                 //self.collectionView?.reloadData()
+             } catch let error as NSError {
+               print("Could not fetch. \(error), \(error.userInfo)")
+             }
+    }
+    
+    func handleReload() {
+        //pinTitle
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+                 return
+               }
+               
+             let managedContext = appDelegate.persistentContainer.viewContext
+             let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Photo")
+            fetchRequest.predicate = NSPredicate(format: "pin.title = %@", pinTitle)
+             do {
+                 let objs = try managedContext.fetch(fetchRequest)
+                 for picture in objs {
+                    managedContext.delete(picture)
+                 }
+                 setupFetchedResultsController()
+                
+                 //self.collectionView?.reloadData()
+             } catch let error as NSError {
+               print("Could not fetch. \(error), \(error.userInfo)")
+             }
+    }
+    
+    
 }

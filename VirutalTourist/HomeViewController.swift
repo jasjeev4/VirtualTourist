@@ -355,9 +355,9 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         let lat = UserDefaults.standard.value(forKey: Keys.latitude)
         let long = UserDefaults.standard.value(forKey: Keys.longitude)
         let latdd = UserDefaults.standard.value(forKey: Keys.latitudeDelta)  as! Double ?? 500.0
-        print("latdd \(latdd)")
+        // print("latdd \(latdd)")
         let longd = UserDefaults.standard.value(forKey: Keys.longitudeDelta) as! Double ?? 500.0
-        print("long \(longd)")
+        // print("long \(longd)")
         if let lat = lat {
             if let long = long {
                 let centre = CLLocationCoordinate2D(latitude: lat as? CLLocationDegrees ?? 0.0, longitude: long  as? CLLocationDegrees ?? 0.0)
@@ -370,5 +370,6 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         print(region)
         return region
     }
-
+    
+    
 }
