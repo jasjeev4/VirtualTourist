@@ -85,7 +85,6 @@ class FlickrClient {
                 }
                 return
             }
-            //let picture = UIImage(data: data)
             DispatchQueue.main.async {
                 completion(data, error)
             }

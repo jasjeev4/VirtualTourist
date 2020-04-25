@@ -354,18 +354,25 @@ class HomeViewController: UIViewController, MKMapViewDelegate {
         var region: MKCoordinateRegion?
         let lat = UserDefaults.standard.value(forKey: Keys.latitude)
         let long = UserDefaults.standard.value(forKey: Keys.longitude)
-        let latdd = UserDefaults.standard.value(forKey: Keys.latitudeDelta)  as! Double ?? 500.0
+        var lat_dd = 250.00
+        if let latdd = UserDefaults.standard.value(forKey: Keys.latitudeDelta) {
+            lat_dd = latdd as! Double
+        }
         // print("latdd \(latdd)")
-        let longd = UserDefaults.standard.value(forKey: Keys.longitudeDelta) as! Double ?? 500.0
+        var lt_dd = 250.00
+        if let longdd = UserDefaults.standard.value(forKey: Keys.longitudeDelta) {
+            lt_dd = longdd as! Double
+        }
         // print("long \(longd)")
         if let lat = lat {
             if let long = long {
                 let centre = CLLocationCoordinate2D(latitude: lat as? CLLocationDegrees ?? 0.0, longitude: long  as? CLLocationDegrees ?? 0.0)
                 // region = MKCoordinateRegion(center: centre, latitudinalMeters: latdd as! CLLocationDistance, longitudinalMeters: longd as! CLLocationDistance)
                 //region = MKCoordinateRegion(center: centre, latitudinalMeters: latdd, longitudinalMeters: longd)
-                let span = MKCoordinateSpan(latitudeDelta: latdd, longitudeDelta: longd)
+                let span = MKCoordinateSpan(latitudeDelta: lat_dd, longitudeDelta: lt_dd)
                 region = MKCoordinateRegion(center: centre, span: span)
             }
+            
         }
         print(region)
         return region

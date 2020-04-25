@@ -101,7 +101,6 @@ class PointViewController: UIViewController, NSFetchedResultsControllerDelegate
     }
  
     func fetchPhotosFromApi() {
-        // ctivityIndicator?.startAnimating()
         collectionButton?.isEnabled = false
         
         FlickrClient.searchPhotos(lat: "\(coordinates.latitude ?? 0.0)", long: "\(coordinates.longitude ?? 0.0)", completion: handleSearchApiResponse(photos:error:))
